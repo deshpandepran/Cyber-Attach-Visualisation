@@ -14,7 +14,7 @@ from frontend.layout import PLOTLY_THEME_LAYOUT, COLOR_PALETTE
 
 def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     """Renders the Country Map & Risk Index page."""
-    st.markdown("<h1>🗺️ Global Threat Risk Index</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Global Threat Risk Index</h1>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size: 1.1rem; color: #8c9ba5; margin-bottom: 30px;'>"
         "Observe geographic distribution of cyber attacks and evaluate normalized national Risk Indexes."
@@ -36,7 +36,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     fig_map = render_risk_choropleth(risk_df)
     st.plotly_chart(fig_map, use_container_width=True)
     
-    with st.expander("💡 Global Security Risk Map Insights & Explanations"):
+    with st.expander("Global Security Risk Map Insights & Explanations"):
         st.markdown(f"""
         *   **Dynamic Calibration:** The risk leaderboard is recalculated in real-time based on the sidebar weights (Incident Frequency: {w_freq:.0%}, Financial Impact: {w_loss:.0%}, Operational Resolution: {w_time:.0%}).
         *   **Geopolitics & Hotspots:** Industrial hubs like the USA, Germany, and Australia show elevated risk indexes due to higher incident reporting frequencies and significant economic damage per breach.

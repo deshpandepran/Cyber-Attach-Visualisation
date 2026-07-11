@@ -11,7 +11,7 @@ from frontend.components import render_threat_network
 
 def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     """Renders the threat actor relationship network page."""
-    st.markdown("<h1>🕸️ Threat Relationship Network</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Threat Relationship Network</h1>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size: 1.1rem; color: #8c9ba5; margin-bottom: 30px;'>"
         "Map relational connections between threat actors, target industries, and geographic destinations."

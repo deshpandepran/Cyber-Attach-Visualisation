@@ -10,7 +10,7 @@ def set_page_theme():
     """Initializes Streamlit page configurations with title and layout."""
     st.set_page_config(
         page_title="CyberVision - Cyber Threat Intelligence Dashboard",
-        page_icon="🛡️",
+        page_icon=None,
         layout="wide",
         initial_sidebar_state="expanded"
     )

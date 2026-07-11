@@ -13,7 +13,7 @@ from frontend.layout import COLOR_PALETTE, PLOTLY_THEME_LAYOUT
 
 def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     """Renders the Attack Source Dashboard view."""
-    st.markdown("<h1>⚔️ Intrusion & Vector Analysis</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Intrusion & Vector Analysis</h1>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size: 1.1rem; color: #8c9ba5; margin-bottom: 30px;'>"
         "Drill down into network traffic forensics, package characteristics, and threat source categories."
@@ -68,7 +68,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
             fig_pie.update_layout(**PLOTLY_THEME_LAYOUT, height=350, margin={"t": 40, "b": 30, "l": 30, "r": 30})
             st.plotly_chart(fig_pie, use_container_width=True)
             
-    with st.expander("💡 Intrusion Forensics Insights"):
+    with st.expander("Intrusion Forensics Insights"):
         st.markdown(f"""
         *   **Anomaly Scores vs Packet Length:** High anomaly scores paired with large packet sizes typically indicate payload-based exploits (like SQL Injection or Buffer Overflow attacks) or data exfiltration.
         *   **Protocol Distribution:** Compares the usage of standard network layers (TCP, UDP, ICMP) in intrusion logs.

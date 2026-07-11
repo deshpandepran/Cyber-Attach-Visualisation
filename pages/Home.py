@@ -13,7 +13,7 @@ from backend.risk import get_country_risk_scores
 
 def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     """Renders the Home Dashboard View."""
-    st.markdown("<h1>🛡️ CyberVision Intelligence Command</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>CyberVision Intelligence Command</h1>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size: 1.1rem; color: #8c9ba5; margin-bottom: 30px;'>"
         "Unified Cybersecurity Threat Operations and Intel Analytics Center."
@@ -27,13 +27,13 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     # 2. Render Metric cards in columns
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        card_kpi("Global Threat Alerts", f"{kpis['total_attacks']:,}", "🚨")
+        card_kpi("Global Threat Alerts", f"{kpis['total_attacks']:,}")
     with col2:
-        card_kpi("Total Financial Impact", f"${kpis['total_loss_million']:,.1f}M", "💰")
+        card_kpi("Total Financial Impact", f"${kpis['total_loss_million']:,.1f}M")
     with col3:
-        card_kpi("Avg Incident Resolution", f"{kpis['avg_resolution_hours']:.1f} Hrs", "⏳")
+        card_kpi("Avg Incident Resolution", f"{kpis['avg_resolution_hours']:.1f} Hrs")
     with col4:
-        card_kpi("Total Affected Users", f"{kpis['affected_users']:,}", "👥")
+        card_kpi("Total Affected Users", f"{kpis['affected_users']:,}")
         
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -48,7 +48,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
         fig_map = render_risk_choropleth(risk_df)
         st.plotly_chart(fig_map, use_container_width=True)
         
-        with st.expander("💡 How to Read the Risk Score & Map"):
+        with st.expander("How to Read the Risk Score & Map"):
             st.markdown(f"""
             *   **Risk Index Formulation:** The Risk Score is a normalized scale from **0 to 10** computed dynamically based on three metrics weighted by your sidebar settings:
                 1.  **Incident Frequency** ({w_freq:.1%})

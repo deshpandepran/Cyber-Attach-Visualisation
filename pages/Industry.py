@@ -14,7 +14,7 @@ from frontend.layout import PLOTLY_THEME_LAYOUT, COLOR_PALETTE
 
 def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     """Renders the Industry dashboard page."""
-    st.markdown("<h1>🏢 Target Industry Analysis</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Target Industry Analysis</h1>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size: 1.1rem; color: #8c9ba5; margin-bottom: 30px;'>"
         "Identify which commercial and government sectors face the highest financial impacts and risk exposures."
@@ -37,7 +37,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     fig_tree = render_industry_treemap(industry_risk)
     st.plotly_chart(fig_tree, use_container_width=True)
     
-    with st.expander("💡 Sector Risk & Loss Insights"):
+    with st.expander("Sector Risk & Loss Insights"):
         st.markdown(f"""
         *   **Treemap Hierarchy:** The size of each sector represents the **Total Financial Loss ($M)** incurred, while the color shade represents the **Average Loss per Incident**.
         *   **Critical Sectors:** Sectors like Healthcare and Finance typically show large dimensions due to substantial breach response costs (e.g. data restoration and regulatory penalties).

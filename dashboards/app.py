@@ -35,7 +35,7 @@ def load_world_geojson():
 # Setup page configuration
 st.set_page_config(
     page_title="CyberVision | Threat Intelligence Dashboard",
-    page_icon="🛡️",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -156,12 +156,12 @@ def get_spatial_dynamic(df, w_freq, w_loss, w_time):
     return metrics
 
 # Header Section
-st.markdown('<div class="main-title">🛡️ CyberVision</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title">CyberVision</div>', unsafe_allow_html=True)
 st.markdown('<div class="main-subtitle">Unified Cyber Threat Intelligence & Visual Analytics System</div>', unsafe_allow_html=True)
 
 # Sidebar / Filters
 st.sidebar.markdown("## Global Filters")
-st.sidebar.subheader("⚙️ Risk Index Calibration")
+st.sidebar.subheader("Risk Index Calibration")
 w_freq_slider = st.sidebar.slider("Frequency Weight", 0.0, 1.0, 0.3, 0.05, help="Weights the threat occurrence count.")
 w_loss_slider = st.sidebar.slider("Financial Impact Weight", 0.0, 1.0, 0.4, 0.05, help="Weights average financial loss ($M).")
 w_time_slider = st.sidebar.slider("Resolution Time Weight", 0.0, 1.0, 0.3, 0.05, help="Weights average incident resolution hours.")
@@ -177,7 +177,7 @@ else:
 spatial_df = get_spatial_dynamic(threats_df, w_freq, w_loss, w_time)
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("📥 Export Datasets")
+st.sidebar.subheader("Export Datasets")
 st.sidebar.download_button(
     label="Download Spatial Risk Data (CSV)",
     data=spatial_df.to_csv(index=False),
@@ -194,7 +194,7 @@ st.sidebar.download_button(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("🗃️ GitHub Dataset Registry")
+st.sidebar.subheader("GitHub Dataset Registry")
 st.sidebar.markdown(f"""
 *   **Global Threat Logs:** `{len(threats_df):,} rows`
 *   **CFR Incidents Catalog:** `{len(temporal_df):,} rows`
@@ -260,13 +260,13 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Tabs Navigation
 tab_map, tab_trends, tab_industry, tab_vuln, tab_malware, tab_resolution, tab_network = st.tabs([
-    "🗺️ Country Threat Map", 
-    "📈 Global Threat Trends", 
-    "🏢 Industry Risk Dashboard",
-    "🔓 Vulnerability Explorer",
-    "🦠 Malware Family Analytics",
-    "⚔️ Attack Source & Resolution",
-    "🕸️ Threat Relationship Network"
+    "Country Threat Map", 
+    "Global Threat Trends", 
+    "Industry Risk Dashboard",
+    "Vulnerability Explorer",
+    "Malware Family Analytics",
+    "Attack Source & Resolution",
+    "Threat Relationship Network"
 ])
 
 # ----------------- Tab 1: Country Threat Map (Task 4.2) -----------------
@@ -325,7 +325,7 @@ with tab_map:
         )
         st.plotly_chart(fig_map, use_container_width=True)
 
-        with st.expander("💡 Global Security Risk Map Insights"):
+        with st.expander("Global Security Risk Map Insights"):
             st.markdown(f"""
             *   **Dynamic Calibration:** The risk leaderboard is recalculated in real-time based on the sidebar weights (Incident Frequency: {w_freq:.0%}, Financial Impact: {w_loss:.0%}, Operational Resolution: {w_time:.0%}).
             *   **Geopolitics & Hotspots:** Industrial hubs like the USA, Germany, and Australia show elevated risk indexes due to higher incident reporting frequencies and significant economic damage per breach.
@@ -429,7 +429,7 @@ with tab_trends:
             fig_loss.update_layout(**PLOTLY_THEME_LAYOUT, height=350, margin={"t": 30, "b": 30, "l": 30, "r": 30})
             st.plotly_chart(fig_loss, use_container_width=True)
 
-        with st.expander("💡 Threat Trend Insights"):
+        with st.expander("Threat Trend Insights"):
             st.markdown("""
             *   **Timeline Distribution:** Visualizes the chronological rise of security incidents globally. Spikes correlate with major geopolitical events or global malware outbreaks.
             *   **Forecasting Line:** Dashed forecast trace projects the threat trend 3 years into the future using linear regression based on historic averages.
@@ -474,7 +474,7 @@ with tab_industry:
             fig_ind_bar.update_layout(**PLOTLY_THEME_LAYOUT)
             st.plotly_chart(fig_ind_bar, use_container_width=True)
             
-        with st.expander("💡 Sector Risk & Loss Insights"):
+        with st.expander("Sector Risk & Loss Insights"):
             st.markdown(f"""
             *   **Treemap Hierarchy:** The size of each sector represents the **Total Financial Loss ($M)** incurred, while the color shade represents the **Average Loss per Incident**.
             *   **Critical Sectors:** Sectors like Healthcare and Finance typically show large dimensions due to substantial breach response costs (e.g. data restoration and regulatory penalties).
@@ -519,7 +519,7 @@ with tab_vuln:
                 fig_v_trend.update_layout(**PLOTLY_THEME_LAYOUT, height=350, margin={"t": 30, "b": 30, "l": 30, "r": 30})
                 st.plotly_chart(fig_v_trend, use_container_width=True)
 
-        with st.expander("💡 Vulnerability Density Insights"):
+        with st.expander("Vulnerability Density Insights"):
             st.markdown(f"""
             *   **Distribution Matrix:** Highlights the volume of software vulnerabilities published per year categorized by severity. Notice the proportion of Critical and High vulnerabilities.
             *   **Registry Search:** Use the Keyword Search below to filter specific CVE titles or summaries dynamically.
@@ -602,7 +602,7 @@ with tab_malware:
         fig_fam.update_layout(**PLOTLY_THEME_LAYOUT, height=400, margin={"t": 30, "b": 30, "l": 30, "r": 30})
         st.plotly_chart(fig_fam, use_container_width=True)
 
-        with st.expander("💡 Malware Forensics Analysis Insights"):
+        with st.expander("Malware Forensics Analysis Insights"):
             st.markdown(f"""
             *   **Class Balance:** The pie chart represents the ratio of Benign (normal memory signatures) to Malicious samples loaded in the forensics model.
             *   **Category Analysis:** Identifies memory evasion families (Trojans, Spyware, Ransomware) showing their prevalence in infected operating systems.
@@ -651,7 +651,7 @@ with tab_resolution:
             fig_source.update_layout(**PLOTLY_THEME_LAYOUT, height=400, margin={"t": 30, "b": 30, "l": 30, "r": 30})
             st.plotly_chart(fig_source, use_container_width=True)
             
-        with st.expander("💡 Intrusion Forensics Insights"):
+        with st.expander("Intrusion Forensics Insights"):
             st.markdown(f"""
             *   **Resolution Times:** Resolution times indicate how different defense mechanisms (e.g. firewalls, AI-detection) impact incident lifecycle lengths across threat types.
             *   **Attribution share:** Nation-state groups and advanced insider threats typically represent distinct risk profiles in financial damage per security event.
@@ -671,7 +671,7 @@ with tab_network:
         fig_net = render_threat_network(threats_df)
         st.plotly_chart(fig_net, use_container_width=True)
         
-        with st.expander("💡 Network Topology Insights"):
+        with st.expander("Network Topology Insights"):
             st.markdown("""
             *   **Node Colors:** **Cyan nodes** represent source nations/threat groups, **magenta nodes** represent industry targets, and **yellow nodes** represent attack tactics.
             *   **Edge Thickness:** Thicker connections indicate a higher volume of recorded attacks linking that actor/nation to that targeted sector.

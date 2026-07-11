@@ -17,20 +17,20 @@ def render_sidebar(
     Returns a dictionary of selected filter options.
     """
     st.sidebar.markdown(
-        "<h2 style='text-align: center; margin-bottom: 20px;'>🛡️ CyberVision</h2>",
+        "<h2 style='text-align: center; margin-bottom: 20px;'>CyberVision</h2>",
         unsafe_allow_html=True
     )
     
     # 1. Navigation Panel
     st.sidebar.subheader("Navigation")
     pages = {
-        "Home": "🏠 Dashboard Home",
-        "Global_Threats": "📈 Global Threat Trends",
-        "Country_Map": "🗺️ World Threat Map",
-        "Industry": "🏢 Industry Dashboard",
-        "Vulnerability": "🔓 Vulnerability Explorer",
-        "Attack_Source": "⚔️ Attack Source Dashboard",
-        "Network": "🕸️ Threat Relationship Network"
+        "Home": "Dashboard Home",
+        "Global_Threats": "Global Threat Trends",
+        "Country_Map": "World Threat Map",
+        "Industry": "Industry Dashboard",
+        "Vulnerability": "Vulnerability Explorer",
+        "Attack_Source": "Attack Source Dashboard",
+        "Network": "Threat Relationship Network"
     }
     
     # We can use query parameters or session state to handle navigation in a single-app routing setup
@@ -103,7 +103,7 @@ def render_sidebar(
     )
     
     st.sidebar.markdown("---")
-    st.sidebar.subheader("⚙️ Risk Index Calibration")
+    st.sidebar.subheader("Risk Index Calibration")
     w_freq = st.sidebar.slider(
         label="Frequency Weight",
         min_value=0.0,

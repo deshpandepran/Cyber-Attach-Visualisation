@@ -13,7 +13,7 @@ from frontend.layout import COLOR_PALETTE, PLOTLY_THEME_LAYOUT
 
 def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     """Renders the Global Threat trends page."""
-    st.markdown("<h1>📈 Global Threat Trends</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Global Threat Trends</h1>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size: 1.1rem; color: #8c9ba5; margin-bottom: 30px;'>"
         "Analyze how cyber attack volumes, frequencies, and vectors evolve over the years."
