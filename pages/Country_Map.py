@@ -38,7 +38,14 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     
     with st.expander("Global Security Risk Map Insights & Explanations"):
         st.markdown(f"""
-        *   **Dynamic Calibration:** The risk leaderboard is recalculated in real-time based on the sidebar weights (Incident Frequency: {w_freq:.0%}, Financial Impact: {w_loss:.0%}, Operational Resolution: {w_time:.0%}).
+        *   **Risk Score Formula:** The Country Risk Index ($R$) is calculated dynamically as a weighted sum of three Min-Max normalized metrics scaled to 0-100:
+            $$R = (w_f \\cdot N_f + w_l \\cdot N_l + w_t \\cdot N_t) \\times 100$$
+            where:
+            *   $w_f, w_l, w_t$ are the user-configured weights in the sidebar (Current: Frequency: {w_freq:.0%}, Loss: {w_loss:.0%}, Resolution Time: {w_time:.0%}).
+            *   $N_f$ is the normalized Incident Frequency.
+            *   $N_l$ is the normalized average Financial Loss ($M).
+            *   $N_t$ is the normalized average Resolution Time (Hours).
+            *   Each metric $N$ is scaled to $[0, 1]$ using Min-Max normalization: $N = \\frac{x - x_{\\min}}{x_{\\max} - x_{\\min}}$.
         *   **Geopolitics & Hotspots:** Industrial hubs like the USA, Germany, and Australia show elevated risk indexes due to higher incident reporting frequencies and significant economic damage per breach.
         *   **Boundary & Mapping Note:** Geopolitical boundaries (including the complete boundaries of India incorporating Jammu & Kashmir) are mapped using standardized international high-resolution GeoJSON geometries to ensure correct territorial representation.
         """)

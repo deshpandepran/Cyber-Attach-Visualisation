@@ -430,8 +430,8 @@ with tab_trends:
 
         with st.expander("Threat Trend Insights"):
             st.markdown("""
-            *   **Timeline Distribution:** Visualizes the chronological rise of security incidents globally. Spikes correlate with major geopolitical events or global malware outbreaks.
-            *   **Forecasting Line:** Dashed forecast trace projects the threat trend 3 years into the future using linear regression based on historic averages.
+            *   **Timeline Integration:** This timeline represents a combined view of two major repositories: the **Global Threat Logs** (solid green line, 2015-2024) and the **Council on Foreign Relations (CFR) Cyber Incidents** (dashed orange line, 2005-2020) datasets to align historical trends.
+            *   **Forecasting Baseline:** The dashed pink forecast trace projects general threat counts 3 years forward using a first-order linear polynomial fit ($y = \\beta_0 + \\beta_1 x$) based on historical averages. Note that this serves as a simple statistical baseline to demonstrate future tendencies, not a deep predictive simulator.
             """)
     else:
         st.warning("Temporal integrated data is missing.")
@@ -475,7 +475,9 @@ with tab_industry:
             
         with st.expander("Sector Risk & Loss Insights"):
             st.markdown(f"""
-            *   **Treemap Hierarchy:** The size of each sector represents the **Total Financial Loss ($M)** incurred, while the color shade represents the **Average Loss per Incident**.
+            *   **Treemap Encoding:** The treemap utilizes a dual-variable encoding scheme:
+                *   **Block Size:** Encodes the **cumulative (total) financial loss** of the sector or vector, showing which categories represent the largest absolute financial drains.
+                *   **Color Scale:** Encodes the **financial loss value range** (from dark teal for low loss to bright cyan for maximum loss), highlighting the intensity of individual threat vectors.
             *   **Critical Sectors:** Sectors like Healthcare and Finance typically show large dimensions due to substantial breach response costs (e.g. data restoration and regulatory penalties).
             *   **Weight Calibrator:** Changing your sidebar weights (Frequency: {w_freq:.0%}, Loss: {w_loss:.0%}, Operational: {w_time:.0%}) shifts the Risk Index values in the leaderboard in real-time.
             """)
@@ -520,7 +522,8 @@ with tab_vuln:
 
         with st.expander("Vulnerability Density Insights"):
             st.markdown(f"""
-            *   **Distribution Matrix:** Highlights the volume of software vulnerabilities published per year categorized by severity. Notice the proportion of Critical and High vulnerabilities.
+            *   **Severity Distribution:** Highlights the volume of software vulnerabilities published per year categorized by severity. Notice the rising proportion of Critical and High severity records.
+            *   **Trend Limitations:** The timeline of disclosures reflects a drop towards the end of the time series. This is due to reporting lags, incomplete data in recent registry windows, and dataset truncation, rather than a decline in global threat volume.
             *   **Registry Search:** Use the Keyword Search below to filter specific CVE titles or summaries dynamically.
             """)
 
@@ -589,8 +592,10 @@ with tab_malware:
             fig_cat.update_layout(**PLOTLY_THEME_LAYOUT, height=350, margin={"t": 30, "b": 30, "l": 30, "r": 30})
             st.plotly_chart(fig_cat, use_container_width=True)
 
-        st.subheader("Specific Malware Family Breakdown")
+        st.subheader("Top Malware Family Breakdown")
         family_counts = malicious_df["family"].value_counts().reset_index()
+        # Sort and take top 12
+        family_counts = family_counts.sort_values(by="count", ascending=False).head(12)
         fig_fam = px.bar(
             family_counts,
             x="family",

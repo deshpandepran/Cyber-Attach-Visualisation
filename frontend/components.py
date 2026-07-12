@@ -193,15 +193,17 @@ def render_attack_source_scatter(df: pd.DataFrame) -> go.Figure:
         return fig
         
     fig = px.scatter(
-        df.head(1000),  # Limit to 1000 items to guarantee smooth performance
+        df.head(500),  # Limit to 500 items to reduce overplotting and improve speed
         x="anomaly_scores",
         y="packet_length",
         color="severity_level",
         size="source_port",  # Using source port size dynamically
         hover_data=["protocol", "action_taken", "standard_country"],
         color_discrete_sequence=[COLOR_PALETTE["neon_green"], COLOR_PALETTE["secondary"], COLOR_PALETTE["accent"], COLOR_PALETTE["neon_pink"]],
-        title="Intrusion Signatures: Anomaly Level vs. Packet Length"
+        title="Intrusion Signatures: Anomaly Level vs. Packet Length",
+        opacity=0.6  # Reduce opacity to resolve overplotting and show point density
     )
+    fig.update_traces(marker=dict(line=dict(width=0.5, color='rgba(255,255,255,0.15)')))
     
     fig.update_layout(
         **PLOTLY_THEME_LAYOUT,
@@ -225,7 +227,7 @@ def render_threat_network(global_threats_df: pd.DataFrame) -> go.Figure:
     # Select top rows to avoid cluttering the visual
     sample_df = global_threats_df.head(150)
     
-    # 1. Add nodes and edges
+    # 1. Add nodes and count edge weights
     for _, row in sample_df.iterrows():
         row_dict = row.to_dict()
         actor = row_dict.get("attack_source", "Unknown")
@@ -237,26 +239,54 @@ def render_threat_network(global_threats_df: pd.DataFrame) -> go.Figure:
         G.add_node(country, type="Country", color=COLOR_PALETTE["primary"])
         G.add_node(industry, type="Industry", color=COLOR_PALETTE["neon_green"])
         
-        G.add_edge(actor, country)
-        G.add_edge(country, industry)
+        # Add actor -> country link
+        if G.has_edge(actor, country):
+            G[actor][country]["weight"] += 1
+        else:
+            G.add_edge(actor, country, weight=1)
+            
+        # Add country -> industry link
+        if G.has_edge(country, industry):
+            G[country][industry]["weight"] += 1
+        else:
+            G.add_edge(country, industry, weight=1)
         
     # 2. Get Node Positions
     pos = nx.spring_layout(G, seed=42, k=0.35)
     
-    # 3. Create Edge Traces
-    edge_x = []
-    edge_y = []
-    for edge in G.edges():
-        x0, y0 = pos[edge[0]]
-        x1, y1 = pos[edge[1]]
-        edge_x.extend([x0, x1, None])
-        edge_y.extend([y0, y1, None])
-        
-    edge_trace = go.Scatter(
-        x=edge_x, y=edge_y,
-        line=dict(width=1, color="rgba(255, 255, 255, 0.15)"),
-        hoverinfo="none",
-        mode="lines"
+    # 3. Create Weighted Edge Traces to prevent clutter
+    edge_x_weak, edge_y_weak = [], []
+    edge_x_med, edge_y_med = [], []
+    edge_x_strong, edge_y_strong = [], []
+    
+    for u, v, d in G.edges(data=True):
+        w = d.get("weight", 1)
+        x0, y0 = pos[u]
+        x1, y1 = pos[v]
+        if w == 1:
+            edge_x_weak.extend([x0, x1, None])
+            edge_y_weak.extend([y0, y1, None])
+        elif w <= 3:
+            edge_x_med.extend([x0, x1, None])
+            edge_y_med.extend([y0, y1, None])
+        else:
+            edge_x_strong.extend([x0, x1, None])
+            edge_y_strong.extend([y0, y1, None])
+            
+    weak_trace = go.Scatter(
+        x=edge_x_weak, y=edge_y_weak,
+        line=dict(width=1, color="rgba(255, 255, 255, 0.08)"),
+        hoverinfo="none", mode="lines", name="Weak Link (Freq = 1)"
+    )
+    med_trace = go.Scatter(
+        x=edge_x_med, y=edge_y_med,
+        line=dict(width=2.5, color="rgba(0, 242, 254, 0.35)"),
+        hoverinfo="none", mode="lines", name="Medium Link (Freq 2-3)"
+    )
+    strong_trace = go.Scatter(
+        x=edge_x_strong, y=edge_y_strong,
+        line=dict(width=4.5, color="rgba(255, 0, 85, 0.65)"),
+        hoverinfo="none", mode="lines", name="Strong Link (Freq > 3)"
     )
     
     # 4. Create Node Traces
@@ -297,7 +327,7 @@ def render_threat_network(global_threats_df: pd.DataFrame) -> go.Figure:
     # 5. Build Figure safely without parameter collisions
     layout_args = {
         "title": "Interactive Threat Actor Relationship Network",
-        "showlegend": False,
+        "showlegend": True,  # Show legend to describe link weights
         "hovermode": "closest",
         "margin": dict(b=20, l=5, r=5, t=40),
         "xaxis": dict(showgrid=False, zeroline=False, showticklabels=False),
@@ -305,11 +335,11 @@ def render_threat_network(global_threats_df: pd.DataFrame) -> go.Figure:
         "height": 550
     }
     for k, v in PLOTLY_THEME_LAYOUT.items():
-        if k not in ["xaxis", "yaxis"]:
+        if k not in ["xaxis", "yaxis", "legend"]:  # Keep our legend settings
             layout_args[k] = v
 
     fig = go.Figure(
-        data=[edge_trace, node_trace],
+        data=[weak_trace, med_trace, strong_trace, node_trace],
         layout=go.Layout(**layout_args)
     )
     return fig
