@@ -35,6 +35,7 @@ import pages.Industry as Industry
 import pages.Vulnerability as Vulnerability
 import pages.Attack_Source as Attack_Source
 import pages.Network as Network
+import pages.Malware_Analytics as Malware_Analytics
 
 def main():
     # 1. Setup Theme Configurations
@@ -135,6 +136,8 @@ def main():
         Attack_Source.render(filtered_data, filters)
     elif current_page == "Network":
         Network.render(filtered_data, filters)
+    elif current_page == "Malware_Analytics":
+        Malware_Analytics.render(filtered_data, filters)
 
 if __name__ == "__main__":
     main()

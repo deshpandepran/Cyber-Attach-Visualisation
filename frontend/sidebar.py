@@ -26,11 +26,12 @@ def render_sidebar(
     pages = {
         "Home": "Dashboard Home",
         "Global_Threats": "Global Threat Trends",
-        "Country_Map": "World Threat Map",
-        "Industry": "Industry Dashboard",
-        "Vulnerability": "Vulnerability Explorer",
-        "Attack_Source": "Attack Source Dashboard",
-        "Network": "Threat Relationship Network"
+        "Country_Map": "Global Security Risk Map",
+        "Industry": "Industry Impact Profile",
+        "Vulnerability": "Vulnerability Severity Distribution",
+        "Malware_Analytics": "Malware Family Analytics",
+        "Attack_Source": "Threat Attribution & Resolution",
+        "Network": "Geopolitical Relationship Network"
     }
     
     # We can use query parameters or session state to handle navigation in a single-app routing setup

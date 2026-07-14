@@ -45,7 +45,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
             *   $N_f$ is the normalized Incident Frequency.
             *   $N_l$ is the normalized average Financial Loss ($M).
             *   $N_t$ is the normalized average Resolution Time (Hours).
-            *   Each metric $N$ is scaled to $[0, 1]$ using Min-Max normalization: $N = \\frac{x - x_{\\min}}{x_{\\max} - x_{\\min}}$.
+            *   Each metric $N$ is scaled to $[0, 1]$ using Min-Max normalization: $N = \\frac{{x - x_{{\\min}}}}{{x_{{\\max}} - x_{{\\min}}}}$.
         *   **Geopolitics & Hotspots:** Industrial hubs like the USA, Germany, and Australia show elevated risk indexes due to higher incident reporting frequencies and significant economic damage per breach.
         *   **Boundary & Mapping Note:** Geopolitical boundaries (including the complete boundaries of India incorporating Jammu & Kashmir) are mapped using standardized international high-resolution GeoJSON geometries to ensure correct territorial representation.
         """)
