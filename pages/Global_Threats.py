@@ -28,7 +28,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
         return
         
     # 1. Main Global Volume Trend
-    fig_volume = render_global_trend_chart(global_df)
+    fig_volume = render_global_trend_chart(datasets["integrated_temporal"])
     st.plotly_chart(fig_volume, use_container_width=True)
     
     # 2. Side-by-side comparison charts

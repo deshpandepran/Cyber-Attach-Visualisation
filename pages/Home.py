@@ -88,7 +88,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
                 <span class="indicator indicator-green"></span>
                 <strong>Network Intrusion Signatures</strong>
                 <p style="margin: 5px 0 0 18px; font-size: 0.9rem; color: #8c9ba5;">
-                    Live network traffic metrics (~5,000 records) including protocols, anomaly scores, packet sizes, and action actions.
+                    Live network traffic metrics (~40,000 records) including protocols, anomaly scores, packet sizes, and action actions.
                 </p>
             </div>
             """,

@@ -21,36 +21,7 @@ def render_sidebar(
         unsafe_allow_html=True
     )
     
-    # 1. Navigation Panel
-    st.sidebar.subheader("Navigation")
-    pages = {
-        "Home": "Dashboard Home",
-        "Global_Threats": "Global Threat Trends",
-        "Country_Map": "Global Security Risk Map",
-        "Industry": "Industry Impact Profile",
-        "Vulnerability": "Vulnerability Severity Distribution",
-        "Malware_Analytics": "Malware Family Analytics",
-        "Attack_Source": "Threat Attribution & Resolution",
-        "Network": "Geopolitical Relationship Network"
-    }
-    
-    # We can use query parameters or session state to handle navigation in a single-app routing setup
-    if "current_page" not in st.session_state:
-        st.session_state["current_page"] = "Home"
-        
-    selected_page_label = st.sidebar.radio(
-        label="Select Page View",
-        options=list(pages.values()),
-        label_visibility="collapsed"
-    )
-    
-    # Find key of selected page
-    for k, v in pages.items():
-        if v == selected_page_label:
-            st.session_state["current_page"] = k
-            break
-            
-    st.sidebar.markdown("---")
+
     st.sidebar.subheader("Global Filters")
     
     # 2. Country Selector

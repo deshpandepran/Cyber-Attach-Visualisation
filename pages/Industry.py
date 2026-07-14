@@ -34,7 +34,7 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     
     # 2. Render Treemap
     st.subheader("Industry Financial Loss Distribution")
-    fig_tree = render_industry_treemap(industry_risk)
+    fig_tree = render_industry_treemap(global_df)
     st.plotly_chart(fig_tree, use_container_width=True)
     
     with st.expander("Sector Risk & Loss Insights"):

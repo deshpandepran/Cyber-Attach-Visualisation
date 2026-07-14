@@ -26,9 +26,11 @@ from backend.filters import (
     filter_attack_signatures,
     filter_malmem
 )
+from backend.risk import get_country_risk_scores
+from backend.analytics import get_kpis
+from frontend.components import card_kpi
 
 # Import page modules dynamically
-import pages.Home as Home
 import pages.Global_Threats as Global_Threats
 import pages.Country_Map as Country_Map
 import pages.Industry as Industry
@@ -67,7 +69,7 @@ def main():
     )))
     
     industries = sorted(list(global_threats_aligned["target_industry"].dropna().unique()))
-    severities = ["Low", "Medium", "High", "Critical"]
+    severities = ["Low", "Moderate", "High", "Critical"]
     
     # 5. Render Sidebar Filters
     filters = render_sidebar(countries, attack_types, industries, severities)
@@ -104,7 +106,7 @@ def main():
         filters["severities"]
     )
     
-    filtered_malmem = malmem
+    filtered_malmem = filter_malmem(malmem, filters["search_query"])
     
     # Pack filtered dataframes into a payload dict
     filtered_data = {
@@ -113,28 +115,88 @@ def main():
         "vulnerabilities": filtered_vuln,
         "attack_signatures": filtered_sigs,
         "malmem": filtered_malmem,
-        "raw_global_threats": global_threats_aligned  # Unfiltered reference for risk scoring baseline
+        "raw_global_threats": global_threats_aligned,  # Unfiltered reference for risk scoring baseline
+        "integrated_temporal": datasets["integrated_temporal"]
     }
     
-    # 7. Page Routing
-    current_page = st.session_state.get("current_page", "Home")
+    # 7. Render Export CSV and GitHub Dataset Registry widgets in Sidebar
+    w_freq, w_loss, w_time = filters.get("weights", (0.3, 0.4, 0.3))
+    risk_df = get_country_risk_scores(filtered_global_threats, w_freq, w_loss, w_time)
     
-    if current_page == "Home":
-        Home.render(filtered_data, filters)
-    elif current_page == "Global_Threats":
-        Global_Threats.render(filtered_data, filters)
-    elif current_page == "Country_Map":
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Export Datasets")
+    st.sidebar.download_button(
+        label="Download Spatial Risk Data (CSV)",
+        data=risk_df.to_csv(index=False),
+        file_name="integrated_spatial.csv",
+        mime="text/csv",
+        help="Export geographic risk index and averages."
+    )
+    st.sidebar.download_button(
+        label="Download Temporal Trends Data (CSV)",
+        data=datasets["integrated_temporal"].to_csv(index=False),
+        file_name="integrated_temporal.csv",
+        mime="text/csv",
+        help="Export chronological timeline details."
+    )
+    
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("GitHub Dataset Registry")
+    st.sidebar.markdown(f"""
+    *   **Global Threat Logs:** `{len(datasets["global_threats"]):,} rows`
+    *   **CFR Incidents Catalog:** `{len(datasets["cfr_incidents"]):,} rows`
+    *   **Vulnerability Registry:** `{len(datasets["vulnerabilities"]):,} rows`
+    *   **Malware Forensic Dumps:** `{len(datasets["malmem"]):,} rows`
+    """)
+    
+    # 8. Render Global KPI Summary Cards at the top of every view (page-independent)
+    st.markdown("<h1>CyberVision Command Center</h1>", unsafe_allow_html=True)
+    st.markdown(
+        "<p style='font-size: 1.1rem; color: #8c9ba5; margin-bottom: 30px;'>"
+        "Unified Cybersecurity Threat Operations and Intel Analytics Platform."
+        "</p>",
+        unsafe_allow_html=True
+    )
+    
+    kpis = get_kpis(filtered_global_threats, filtered_cfr, filtered_vuln)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        card_kpi("Total Global Incidents", f"{kpis['total_attacks']:,}", icon="🚨")
+    with col2:
+        card_kpi("Estimated Loss in USD", f"${kpis['total_loss_million']:,.1f}M", icon="💰")
+    with col3:
+        card_kpi("Average Resolution Time", f"{kpis['avg_resolution_hours']:.1f} hrs", icon="⏱️")
+    with col4:
+        card_kpi("Users Impacted", f"{kpis['affected_users']:,}", icon="👥")
+        
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 9. Tab-Based Navigation: switches between the 7 analytical views
+    tab_map, tab_trends, tab_industry, tab_vuln, tab_malware, tab_resolution, tab_network = st.tabs([
+        "Country Threat Map", 
+        "Global Threat Trends", 
+        "Industry Risk Dashboard",
+        "Vulnerability Explorer",
+        "Malware Family Analytics",
+        "Attack Source & Resolution",
+        "Threat Relationship Network"
+    ])
+    
+    with tab_map:
         Country_Map.render(filtered_data, filters)
-    elif current_page == "Industry":
+    with tab_trends:
+        Global_Threats.render(filtered_data, filters)
+    with tab_industry:
         Industry.render(filtered_data, filters)
-    elif current_page == "Vulnerability":
+    with tab_vuln:
         Vulnerability.render(filtered_data, filters)
-    elif current_page == "Attack_Source":
-        Attack_Source.render(filtered_data, filters)
-    elif current_page == "Network":
-        Network.render(filtered_data, filters)
-    elif current_page == "Malware_Analytics":
+    with tab_malware:
         Malware_Analytics.render(filtered_data, filters)
+    with tab_resolution:
+        Attack_Source.render(filtered_data, filters)
+    with tab_network:
+        Network.render(filtered_data, filters)
 
 if __name__ == "__main__":
     main()

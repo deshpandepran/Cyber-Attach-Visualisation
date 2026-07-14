@@ -65,12 +65,32 @@ def load_malmem() -> pd.DataFrame:
         return pd.DataFrame()
     return pd.read_csv(file_path)
 
+@st.cache_data
+def load_integrated_temporal() -> pd.DataFrame:
+    """Loads the pre-aggregated integrated temporal dataset."""
+    file_path = PROCESSED_DIR / "integrated_temporal.csv"
+    if not file_path.exists():
+        st.warning(f"Integrated temporal file not found at {file_path}. Using empty dataframe.")
+        return pd.DataFrame()
+    return pd.read_csv(file_path)
+
+@st.cache_data
+def load_integrated_spatial() -> pd.DataFrame:
+    """Loads the pre-aggregated integrated spatial dataset."""
+    file_path = PROCESSED_DIR / "integrated_spatial.csv"
+    if not file_path.exists():
+        st.warning(f"Integrated spatial file not found at {file_path}. Using empty dataframe.")
+        return pd.DataFrame()
+    return pd.read_csv(file_path)
+
 def load_all_datasets() -> dict[str, pd.DataFrame]:
-    """Loads all five datasets and returns them in a dictionary."""
+    """Loads all datasets and returns them in a dictionary."""
     return {
         "global_threats": load_global_threats(),
         "cfr_incidents": load_cfr_incidents(),
         "vulnerabilities": load_vulnerabilities(),
         "attack_signatures": load_attack_signatures(),
         "malmem": load_malmem(),
+        "integrated_temporal": load_integrated_temporal(),
+        "integrated_spatial": load_integrated_spatial(),
     }

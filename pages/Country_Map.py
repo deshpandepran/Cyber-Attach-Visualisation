@@ -38,8 +38,8 @@ def render(datasets: Dict[str, pd.DataFrame], filters: Dict[str, Any]):
     
     with st.expander("Global Security Risk Map Insights & Explanations"):
         st.markdown(f"""
-        *   **Risk Score Formula:** The Country Risk Index ($R$) is calculated dynamically as a weighted sum of three Min-Max normalized metrics scaled to 0-100:
-            $$R = (w_f \\cdot N_f + w_l \\cdot N_l + w_t \\cdot N_t) \\times 100$$
+        *   **Risk Score Formula:** The Country Risk Index ($R$) is calculated dynamically as a weighted sum of three Min-Max normalized metrics scaled to 0-10:
+            $$R = (w_f \\cdot N_f + w_l \\cdot N_l + w_t \\cdot N_t) \\times 10$$
             where:
             *   $w_f, w_l, w_t$ are the user-configured weights in the sidebar (Current: Frequency: {w_freq:.0%}, Loss: {w_loss:.0%}, Resolution Time: {w_time:.0%}).
             *   $N_f$ is the normalized Incident Frequency.

@@ -36,32 +36,61 @@ def card_kpi(label: str, value: str, icon: str = "⚡"):
         unsafe_allow_html=True
     )
 
-def render_global_trend_chart(df: pd.DataFrame) -> go.Figure:
-    """Generates an interactive line/area chart showing attacks over the years."""
-    if df.empty:
+def render_global_trend_chart(temporal_df: pd.DataFrame) -> go.Figure:
+    """Generates an interactive line/area chart showing attacks over the years with forecast."""
+    if temporal_df.empty:
         fig = go.Figure()
-        fig.add_annotation(text="No data matching filters.", showarrow=False)
+        fig.add_annotation(text="No chronological trend data available.", showarrow=False)
         return fig
         
-    yearly = df.groupby("year").size().reset_index(name="Attack Count")
+    fig = go.Figure()
     
-    fig = px.area(
-        yearly,
-        x="year",
-        y="Attack Count",
-        labels={"year": "Year", "Attack Count": "Number of Attacks"},
-        color_discrete_sequence=[COLOR_PALETTE["primary"]]
-    )
+    # 1. Global Threats Trace
+    fig.add_trace(go.Scatter(
+        x=temporal_df["year"], 
+        y=temporal_df["global_incidents"],
+        mode='lines+markers', 
+        name='Global Threats (2015-2024)',
+        line=dict(color='#00FFCC', width=3)
+    ))
     
+    # 2. CFR Historical Trace
+    fig.add_trace(go.Scatter(
+        x=temporal_df["year"], 
+        y=temporal_df["cfr_incidents"],
+        mode='lines+markers', 
+        name='CFR Historical (2005-2020)',
+        line=dict(color='#FF8F00', width=2, dash='dash')
+    ))
+    
+    # 3. 3-Year Regression Forecast
+    years = temporal_df["year"].values
+    global_incidents = temporal_df["global_incidents"].values
+    valid_mask = (years >= 2015) & (years <= 2023) & (global_incidents > 0)
+    X = years[valid_mask]
+    y = global_incidents[valid_mask]
+    
+    if len(X) > 2:
+        poly = np.polyfit(X, y, 1)
+        forecast_years = np.array([2023, 2024, 2025, 2026])
+        forecast_values = np.polyval(poly, forecast_years)
+        forecast_values = np.clip(forecast_values, 0, None)
+        
+        fig.add_trace(go.Scatter(
+            x=forecast_years, 
+            y=forecast_values,
+            mode='lines+markers', 
+            name='Linear Forecast (2023-2026)',
+            line=dict(color='#FF00FF', width=2, dash='dot')
+        ))
+        
     fig.update_layout(
         **PLOTLY_THEME_LAYOUT,
+        xaxis_title="Year",
+        yaxis_title="Incident Count",
         margin={"t": 30, "b": 30, "l": 30, "r": 30},
         height=400,
-        title="Global Attack Volume Trend (2015-2024)"
-    )
-    fig.update_traces(
-        line=dict(width=3, color=COLOR_PALETTE["primary"]),
-        fillcolor="rgba(0, 242, 254, 0.15)"
+        title="Chronological Cyber Incident Trend Timeline & Forecast"
     )
     return fig
 
@@ -134,20 +163,24 @@ def render_risk_choropleth(country_risk_df: pd.DataFrame) -> go.Figure:
     )
     return fig
 
-def render_industry_treemap(industry_df: pd.DataFrame) -> go.Figure:
-    """Generates an interactive Treemap representing financial losses across industries."""
-    if industry_df.empty:
+def render_industry_treemap(df: pd.DataFrame) -> go.Figure:
+    """Generates an interactive Treemap representing financial losses across industries and attack vectors."""
+    if df.empty:
         fig = go.Figure()
-        fig.add_annotation(text="No industry statistics available.", showarrow=False)
+        fig.add_annotation(text="No threat statistics available.", showarrow=False)
         return fig
         
     fig = px.treemap(
-        industry_df,
-        path=["target_industry"],
-        values="total_loss",
-        color="avg_loss",
-        color_continuous_scale=[[0.0, "rgba(17, 25, 40, 0.6)"], [1.0, COLOR_PALETTE["primary"]]],
-        labels={"total_loss": "Total Loss ($M)", "avg_loss": "Avg Loss ($M)"},
+        df,
+        path=["target_industry", "standard_attack_type"],
+        values="financial_loss_in_million_",
+        color="financial_loss_in_million_",
+        color_continuous_scale=[
+            [0.0, "rgba(17, 25, 40, 0.6)"],
+            [0.5, "rgba(79, 172, 254, 0.8)"],
+            [1.0, COLOR_PALETTE["primary"]]
+        ],
+        labels={"financial_loss_in_million_": "Loss (M USD)"},
         title="Industry Impact Profile (Size = Total Loss, Color = Avg Loss)"
     )
     
